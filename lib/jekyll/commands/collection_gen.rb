@@ -1,0 +1,50 @@
+require 'date'
+
+module Jekyll
+  module Commands
+    class CollectionGen < Command
+      class << self
+        def init_with_program(prog)
+          prog.command(:collection_gen) do |c|
+            c.action do |args, options|
+              Jekyll.logger.info "Generating blog posts..."
+
+              site = Jekyll::Site.new(configuration_from_options(options))
+
+              collection_name = 'posts'
+              data_file = 'entries/posts/en-us.json'
+
+              file_path = File.join(site.config['source'], site.config['data_dir'], data_file)
+
+              if File.exist?(file_path)
+                file = File.read(file_path)
+                items = JSON.parse(file)
+                directory = File.join(site.config['source'], "_#{collection_name}")
+
+                Dir.mkdir(directory) unless File.exists?(directory)
+
+                items.each_index do |item|
+                  current = items[item]
+
+                  # Overrides
+                  current['layout'] = 'blog/blog-post'
+                  # current['permalink'] = '/blog' + current['url']
+
+                  filename_title = current['url'].gsub(/[\s\/]/, '')
+                  filename = Date.iso8601(current['date']).strftime + "-#{filename_title}"
+                  as_yaml = current.to_yaml
+
+                  File.write(File.join(directory, "#{filename}.md"), as_yaml + '---')
+                end
+
+                # Loop
+              else
+                puts "File does not exist: #{file_path}"
+              end
+            end
+          end
+        end
+      end
+    end
+  end
+end
