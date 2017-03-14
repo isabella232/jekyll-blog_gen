@@ -1,4 +1,5 @@
 require 'date'
+require 'reverse_markdown'
 
 module Jekyll
   module Commands
@@ -30,11 +31,29 @@ module Jekyll
                   current['layout'] = 'blog/blog-post'
                   # current['permalink'] = '/blog' + current['url']
 
+                  # Strip slashes out of URL to create slug
                   filename_title = current['url'].gsub(/[\s\/]/, '')
+
+                  # Create standard filename expected for posts
                   filename = Date.iso8601(current['date']).strftime + "-#{filename_title}"
+
+                  # Pull out the content
+                  # content = current['full_description']
+                  # current.delete('full_description')
+
+                  # Convert the HTML content to markdown
+                  # content_md = ReverseMarkdown.convert(content).strip
+
+                  # Create an excerpt
+                  # excerpt, _, _after = content_md.partition('<!-- more -->')
+                  # if excerpt.empty?
+                  #   excerpt, _, _after = content_md.partition("\n\n")
+                  # end
+                  # current['excerpt'] = excerpt
+
                   as_yaml = current.to_yaml
 
-                  File.write(File.join(directory, "#{filename}.md"), as_yaml + '---')
+                  File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---") # "\n#{content}"
                 end
 
                 # Loop
