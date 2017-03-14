@@ -38,8 +38,8 @@ module Jekyll
                   filename = Date.iso8601(current['date']).strftime + "-#{filename_title}"
 
                   # Pull out the content
-                  # content = current['full_description']
-                  # current.delete('full_description')
+                  content = current['full_description']
+                  current.delete('full_description')
 
                   # Convert the HTML content to markdown
                   # content_md = ReverseMarkdown.convert(content).strip
@@ -53,7 +53,7 @@ module Jekyll
 
                   as_yaml = current.to_yaml
 
-                  File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---") # "\n#{content}"
+                  File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
                 end
 
                 # Loop
