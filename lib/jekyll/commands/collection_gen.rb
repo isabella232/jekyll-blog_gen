@@ -1,5 +1,5 @@
 require 'date'
-require 'reverse_markdown'
+# require 'reverse_markdown'
 
 module Jekyll
   module Commands
