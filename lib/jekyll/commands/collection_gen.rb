@@ -39,11 +39,10 @@ module Jekyll
 
                   # Pull out the content
                   content = current['full_description']
-                  current.delete('full_description')
 
+                  # current.delete('full_description')
                   # Convert the HTML content to markdown
                   # content_md = ReverseMarkdown.convert(content).strip
-
                   # Create an excerpt
                   # excerpt, _, _after = content_md.partition('<!-- more -->')
                   # if excerpt.empty?
