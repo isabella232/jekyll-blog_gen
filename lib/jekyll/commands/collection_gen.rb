@@ -39,8 +39,13 @@ module Jekyll
 
                   # Pull out the content
                   content = current['full_description']
+                  current.delete('full_description')
 
-                  # current.delete('full_description')
+                  # Set a search type for indexing
+                  current['search_type'] = 'blog_post'
+
+                  # TODO: Build excerpt generator based on the first <hr> present in the blog post body
+
                   # Convert the HTML content to markdown
                   # content_md = ReverseMarkdown.convert(content).strip
                   # Create an excerpt
@@ -49,6 +54,11 @@ module Jekyll
                   #   excerpt, _, _after = content_md.partition("\n\n")
                   # end
                   # current['excerpt'] = excerpt
+                  # Partition to <hr>
+                  # If no <hr>, grab the first X words with an ellipsis like we currently do
+                  # Set as the "excerpt" front matter variable
+
+                  current['excerpt'] = truncatewords(strip_html(content), 35)
 
                   as_yaml = current.to_yaml
 
@@ -61,6 +71,23 @@ module Jekyll
               end
             end
           end
+        end
+
+        # From Liquid
+        def strip_html(input)
+          empty = ''.freeze
+          input.to_s.gsub(/<script.*?<\/script>/m, empty).gsub(/<!--.*?-->/m, empty).gsub(/<style.*?<\/style>/m, empty).gsub(/<.*?>/m, empty)
+        end
+
+        # From Liquid
+        def truncatewords(input, words = 15, truncate_string = "...".freeze)
+          if input.nil? then
+            return
+          end
+          wordlist = input.to_s.split
+          l = words.to_i - 1
+          l = 0 if l < 0
+          wordlist.length > l ? wordlist[0..l].join(" ".freeze) + truncate_string : input
         end
       end
     end
