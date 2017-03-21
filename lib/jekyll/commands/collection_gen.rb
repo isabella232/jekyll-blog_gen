@@ -44,28 +44,17 @@ module Jekyll
                   # Set a search type for indexing
                   current['search_type'] = 'blog_post'
 
-                  # TODO: Build excerpt generator based on the first <hr> present in the blog post body
+                  # Create an excerpt if the post doesn't have one set
+                  if !current.has_key('excerpt') || current['excerpt'].trim == ''
+                    current['excerpt'] = truncatewords(strip_html(content), 35)
+                  end
 
-                  # Convert the HTML content to markdown
-                  # content_md = ReverseMarkdown.convert(content).strip
-                  # Create an excerpt
-                  # excerpt, _, _after = content_md.partition('<!-- more -->')
-                  # if excerpt.empty?
-                  #   excerpt, _, _after = content_md.partition("\n\n")
-                  # end
-                  # current['excerpt'] = excerpt
-                  # Partition to <hr>
-                  # If no <hr>, grab the first X words with an ellipsis like we currently do
-                  # Set as the "excerpt" front matter variable
-
-                  current['excerpt'] = truncatewords(strip_html(content), 35)
-
+                  # Convert the data to front matter variables
                   as_yaml = current.to_yaml
 
+                  # Output the front matter and the raw post content into a Markdown file
                   File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
                 end
-
-                # Loop
               else
                 puts "File does not exist: #{file_path}"
               end
