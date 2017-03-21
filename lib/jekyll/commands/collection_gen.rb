@@ -45,7 +45,7 @@ module Jekyll
                   current['search_type'] = 'blog_post'
 
                   # Create an excerpt if the post doesn't have one set
-                  if !current.has_key?('excerpt') || current['excerpt'].trim == ''
+                  if !current.has_key?('excerpt') || current['excerpt'].strip == ''
                     current['excerpt'] = truncatewords(strip_html(content), 35)
                   end
 
