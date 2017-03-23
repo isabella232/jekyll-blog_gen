@@ -13,19 +13,37 @@ module Jekyll
               @site = Jekyll::Site.new(configuration_from_options(options))
               @posts = []
 
+              # Must be first
               generate_blog_posts
+
               generate_blog_home
             end
           end
         end
 
+        def get_content_json(content_type)
+          file_path = File.join(@site.config['source'], @site.config['data_dir'], "entries/#{content_type}/en-us.json")
+
+          if File.exist?(file_path)
+            file_data = File.read(file_path)
+
+            if file_data
+              json_data = JSON.parse(file_data)
+
+              if json_data
+                return json_data
+              end
+            end
+          end
+
+          false
+        end
+
         def generate_blog_home
           Jekyll.logger.info 'Generating blog home...'
-          blog_home_file_path = File.join(@site.config['source'], @site.config['data_dir'], 'entries/blog_home/en-us.json')
+          blog_home = get_content_json('blog_home').first
 
-          if File.exist?(blog_home_file_path)
-            blog_home = JSON.parse(File.read(blog_home_file_path))[0]
-
+          if blog_home
             if blog_home['featured_post']
               featured_post = @posts.find { |post| post['uid'] === blog_home['featured_post'][0] }
             end
@@ -34,8 +52,8 @@ module Jekyll
                 'layout' => 'blog-listing',
                 'permalink' => blog_home['url'],
                 'title' => blog_home['seo']['meta_title'],
-                'pagination' => { 'enabled' => true },
-                'seo' => { 'meta_description' => blog_home['seo']['meta_description'] },
+                'pagination' => {'enabled' => true},
+                'seo' => {'meta_description' => blog_home['seo']['meta_description']},
                 'featured_post' => featured_post
             }
 
@@ -45,74 +63,67 @@ module Jekyll
             # Output the front matter and the raw post content into a Markdown file
             File.write(File.join(directory, 'index.md'), "#{front_matter.to_yaml}---\n")
           end
+
+          false
         end
 
         def generate_blog_posts
           Jekyll.logger.info 'Generating blog posts...'
 
-          collection_name = 'posts'
-          data_file = 'entries/posts/en-us.json'
-          category_data_file = 'entries/categories/en-us.json'
+          # Fetch the posts, categories, authors
+          categories = get_content_json('categories')
+          posts = get_content_json('posts')
+          authors = get_content_json('authors')
 
-          file_path = File.join(@site.config['source'], @site.config['data_dir'], data_file)
-          category_file_path = File.join(@site.config['source'], @site.config['data_dir'], category_data_file)
+          # Make '_posts' collection directory
+          directory = File.join(@site.config['source'], '_posts')
+          Dir.mkdir(directory) unless File.exists?(directory)
 
-          if File.exist?(category_file_path)
-            category_file = File.read(category_file_path)
-            categories = JSON.parse(category_file)
-          end
+          posts.each do |post|
+            # Overrides
+            post['layout'] = 'blog/blog-post'
+            # post['permalink'] = '/blog' + post['url']
 
-          if File.exist?(file_path)
-            file = File.read(file_path)
-            items = JSON.parse(file)
-            directory = File.join(@site.config['source'], "_#{collection_name}")
+            # Strip slashes out of URL to create slug
+            filename_title = post['url'].gsub(/[\s\/]/, '')
 
-            Dir.mkdir(directory) unless File.exists?(directory)
+            # Create standard filename expected for posts
+            filename = Date.iso8601(post['date']).strftime + "-#{filename_title}"
 
-            items.each_index do |item|
-              current = items[item]
+            # Pull out the content
+            content = post['full_description']
+            post.delete('full_description')
 
-              # Overrides
-              current['layout'] = 'blog/blog-post'
-              # current['permalink'] = '/blog' + current['url']
+            # Set a search type for indexing
+            post['search_type'] = 'blog_post'
 
-              # Strip slashes out of URL to create slug
-              filename_title = current['url'].gsub(/[\s\/]/, '')
-
-              # Create standard filename expected for posts
-              filename = Date.iso8601(current['date']).strftime + "-#{filename_title}"
-
-              # Pull out the content
-              content = current['full_description']
-              current.delete('full_description')
-
-              # Set a search type for indexing
-              current['search_type'] = 'blog_post'
-
-              # Create an excerpt if the post doesn't have one set
-              if !current.has_key?('excerpt') || current['excerpt'].strip == ''
-                current['excerpt'] = truncatewords(strip_html(content), 35)
-              end
-
-              # Convert the category UIDs to their text equivalents
-              if categories
-                current['category'].each_with_index do |category, index|
-                  this_category = categories.find { |c| c['uid'] === category }
-                  current['category'][index] = this_category['title']
-                end
-              end
-
-              # Convert the data to front matter variables
-              as_yaml = current.to_yaml
-
-              # Add to collection
-              @posts.push(current)
-
-              # Output the front matter and the raw post content into a Markdown file
-              File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
+            # Create an excerpt if the post doesn't have one set
+            if !post.has_key?('excerpt') || post['excerpt'].strip == ''
+              post['excerpt'] = truncatewords(strip_html(content), 35)
             end
-          else
-            puts "File does not exist: #{file_path}"
+
+            # Convert the category UIDs to their text equivalents
+            if categories
+              post['category'].each_with_index do |category, index|
+                this_category = categories.find { |c| c['uid'] === category }
+                post['category'][index] = this_category['title']
+              end
+            end
+
+            # Convert the author UID into the actual author data
+            if post['author'] && post['author'][0]
+              this_author = authors.find { |c| c['uid'] === post['author'][0] }
+              post['author'] = this_author
+            end
+
+            # Convert the data to front matter variables
+            as_yaml = post.to_yaml
+
+            # Add to collection
+            @posts.push(post)
+
+            # Output the front matter and the raw post content into a Markdown file
+            File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
           end
         end
 
