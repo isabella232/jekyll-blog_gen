@@ -11,9 +11,10 @@ module Jekyll
           prog.command(:collection_gen) do |c|
             c.action do |args, options|
               @site = Jekyll::Site.new(configuration_from_options(options))
+              @posts = []
 
-              generate_blog_home
               generate_blog_posts
+              generate_blog_home
             end
           end
         end
@@ -25,12 +26,17 @@ module Jekyll
           if File.exist?(blog_home_file_path)
             blog_home = JSON.parse(File.read(blog_home_file_path))[0]
 
+            if blog_home['featured_post']
+              featured_post = @posts.find { |post| post['uid'] === blog_home['featured_post'][0] }
+            end
+
             front_matter = {
                 'layout' => 'blog-listing',
                 'permalink' => blog_home['url'],
                 'title' => blog_home['seo']['meta_title'],
                 'pagination' => { 'enabled' => true },
-                'seo' => { 'meta_description' => blog_home['seo']['meta_description'] }
+                'seo' => { 'meta_description' => blog_home['seo']['meta_description'] },
+                'featured_post' => featured_post
             }
 
             directory = File.join(@site.config['source'], '_pages/blog')
@@ -98,6 +104,9 @@ module Jekyll
 
               # Convert the data to front matter variables
               as_yaml = current.to_yaml
+
+              # Add to collection
+              @posts.push(current)
 
               # Output the front matter and the raw post content into a Markdown file
               File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
