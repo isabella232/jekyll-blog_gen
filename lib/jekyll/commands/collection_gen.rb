@@ -22,7 +22,11 @@ module Jekyll
         end
 
         def get_content_json(content_type)
-          file_path = File.join(@site.config['source'], @site.config['data_dir'], "entries/#{content_type}/en-us.json")
+          if content_type === 'assets'
+            file_path = File.join(@site.config['source'], @site.config['data_dir'], 'assets/assets.json')
+          else
+            file_path = File.join(@site.config['source'], @site.config['data_dir'], "entries/#{content_type}/en-us.json")
+          end
 
           if File.exist?(file_path)
             file_data = File.read(file_path)
@@ -70,10 +74,11 @@ module Jekyll
         def generate_blog_posts
           Jekyll.logger.info 'Generating blog posts...'
 
-          # Fetch the posts, categories, authors
+          # Fetch the posts, categories, authors, assets
           categories = get_content_json('categories')
           posts = get_content_json('posts')
           authors = get_content_json('authors')
+          assets = get_content_json('assets')
 
           # Make '_posts' collection directory
           directory = File.join(@site.config['source'], '_posts')
@@ -93,6 +98,15 @@ module Jekyll
             # Pull out the content
             content = post['full_description']
             post.delete('full_description')
+
+            # Convert featured image UID to local file path
+            if post.has_key?('featured_image')
+              assetData = assets.find { |asset| asset['uid'] == post['featured_image'] }
+
+              if assetData
+                post['featured_image'] = "assets/images/#{post['featured_image']}/#{assetData['filename']}"
+              end
+            end
 
             # Set a search type for indexing
             post['search_type'] = 'blog_post'
