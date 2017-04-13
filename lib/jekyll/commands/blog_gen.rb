@@ -86,7 +86,7 @@ module Jekyll
 
           posts.each do |post|
             # Overrides
-            post['layout'] = 'blog/blog-post'
+            post['layout'] = 'article'
             # post['permalink'] = '/blog' + post['url']
 
             # Strip slashes out of URL to create slug
