@@ -1,14 +1,14 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'jekyll/collection_gen/version'
+require 'jekyll/blog_gen/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "jekyll-collection_gen"
-  spec.version       = Jekyll::CollectionGen::VERSION
+  spec.name          = "jekyll-blog_gen"
+  spec.version       = Jekyll::BlogGen::VERSION
   spec.authors       = ["Jamey Greenwood"]
   spec.email         = ["jamey.greenwood@theunit.co.uk"]
-  spec.summary       = %q{Generates collections from JSON data files}
+  spec.summary       = %q{Generates blog from JSON data files}
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.

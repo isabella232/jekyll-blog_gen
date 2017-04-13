@@ -1,15 +1,13 @@
-# Jekyll::CollectionGen
+# Jekyll::BlogGen
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/jekyll/collection_gen`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Generates standard Jekyll blog post files into the `/_posts` directory from Contentstack JSON files.
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'jekyll-collection_gen'
+gem 'jekyll-blog_gen'
 ```
 
 And then execute:
@@ -18,11 +16,11 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install jekyll-collection_gen
+    $ gem install jekyll-blog_gen
 
 ## Usage
 
-TODO: Write usage instructions here
+Run `jekyll blog_gen` after downloading the latest content files into `/_data` but before a Jekyll build.
 
 ## Development
 
@@ -32,5 +30,5 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/jekyll-collection_gen.
+Bug reports and pull requests are welcome on GitHub at https://github.com/theunitteam/jekyll-blog_gen.
 

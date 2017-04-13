@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in jekyll-collection_gen.gemspec
+# Specify your gem's dependencies in jekyll-blog_gen.gemspec
 gemspec

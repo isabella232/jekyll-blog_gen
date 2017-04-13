@@ -5,10 +5,10 @@ require 'yaml'
 
 module Jekyll
   module Commands
-    class CollectionGen < Command
+    class BlogGen < Command
       class << self
         def init_with_program(prog)
-          prog.command(:collection_gen) do |c|
+          prog.command(:blog_gen) do |c|
             c.action do |args, options|
               @site = Jekyll::Site.new(configuration_from_options(options))
               @posts = []
