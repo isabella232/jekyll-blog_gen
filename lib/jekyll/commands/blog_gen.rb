@@ -49,7 +49,7 @@ module Jekyll
 
           if blog_home
             if blog_home['featured_post']
-              featured_post = @posts.find { |post| post['uid'] === blog_home['featured_post'][0] }
+              featured_post = @posts.find {|post| post['uid'] === blog_home['featured_post'][0]}
             end
 
             front_matter = {
@@ -101,7 +101,7 @@ module Jekyll
 
             # Convert featured image UID to local file path
             if post.has_key?('featured_image')
-              assetData = assets.find { |asset| asset['uid'] == post['featured_image'] }
+              assetData = assets.find {|asset| asset['uid'] == post['featured_image']}
 
               if assetData
                 post['featured_image'] = "assets/images/#{post['featured_image']}/#{assetData['filename']}"
@@ -119,15 +119,21 @@ module Jekyll
             # Convert the category UIDs to their text equivalents
             if categories
               post['category'].each_with_index do |category, index|
-                this_category = categories.find { |c| c['uid'] === category }
-                post['category'][index] = this_category['title']
+                this_category = categories.find {|c| c['uid'] === category}
+
+                if this_category
+                  post['category'][index] = this_category['title']
+                end
               end
             end
 
             # Convert the author UID into the actual author data
             if post['author'] && post['author'][0]
-              this_author = authors.find { |c| c['uid'] === post['author'][0] }
-              post['author'] = this_author
+              this_author = authors.find {|c| c['uid'] === post['author'][0]}
+
+              if this_author
+                post['author'] = this_author
+              end
             end
 
             # Convert the data to front matter variables
