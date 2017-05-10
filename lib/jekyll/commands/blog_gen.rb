@@ -50,10 +50,10 @@ module Jekyll
           if blog_home
             blog_home = blog_home.first
 
-            if blog_home['featured_post']
+            if blog_home['featured_post'].length == 1
               featured_post = @posts.find {|post| post['uid'] === blog_home['featured_post'][0]}
             else
-              featured_post = @posts.sort{ |a, b| b.date <=> a.date}.first
+              featured_post = @posts.sort{ |a, b| b['date'] <=> a['date'] }.first
             end
 
             front_matter = {
