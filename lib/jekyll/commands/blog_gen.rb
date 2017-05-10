@@ -113,7 +113,7 @@ module Jekyll
 
             # Create an excerpt if the post doesn't have one set
             if !post.has_key?('excerpt') || post['excerpt'].strip == ''
-              post['excerpt'] = truncatewords(strip_html(content), 35)
+              post['excerpt'] = truncatechars(strip_html(content), 240)
             end
 
             # Convert the category UIDs to their text equivalents
@@ -162,6 +162,35 @@ module Jekyll
           l = words.to_i - 1
           l = 0 if l < 0
           wordlist.length > l ? wordlist[0..l].join(" ".freeze) + truncate_string : input
+        end
+
+        # Truncate to the number of characters without splitting words
+        def truncatechars(input, limit = 300, truncate_string = '...'.freeze)
+
+          if input.nil? then
+            return
+          end
+
+          if input.length > limit
+            # Split string into words
+            input_words = input.to_s.split
+
+            # Count characters used
+            chars_count = 0
+            output_words = []
+
+            input_words.each do |word|
+              if chars_count + word.length >= limit
+                return output_words.join(' ') + truncate_string
+              else
+                chars_count += word.length + 1
+                output_words.push(word)
+              end
+            end
+
+          else
+            return input
+          end
         end
       end
     end
