@@ -17,6 +17,8 @@ module Jekyll
               generate_blog_posts
 
               generate_blog_home
+
+              generate_press_releases
             end
           end
         end
@@ -145,6 +147,42 @@ module Jekyll
 
             # Add to collection
             @posts.push(post)
+
+            # Output the front matter and the raw post content into a Markdown file
+            File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
+          end
+        end
+
+        def generate_press_releases
+          Jekyll.logger.info 'Generating press releases...'
+
+          # Fetch them
+          press_releases = get_content_json('press_releases')
+
+          # Make '_press_releases' collection directory
+          directory = File.join(@site.config['source'], '_press_releases')
+          Dir.mkdir(directory) unless File.exists?(directory)
+
+          press_releases.each do |press_release|
+            # Strip slashes out of URL to create slug
+            filename_title = press_release['url'].gsub(/[\s\/]/, '')
+
+            # Create standard filename expected for press_releases
+            filename = Date.iso8601(press_release['date']).strftime + "-#{filename_title}"
+
+            # Pull out the content
+            content = press_release['body']
+            press_release.delete('body')
+
+            # Switch URL field to be permalink
+            press_release['permalink'] = press_release['url'] + '/'
+            press_release.delete('url')
+
+            # Set a search type for indexing
+            press_release['search_type'] = 'press_release'
+
+            # Convert the data to front matter variables
+            as_yaml = press_release.to_yaml
 
             # Output the front matter and the raw post content into a Markdown file
             File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
