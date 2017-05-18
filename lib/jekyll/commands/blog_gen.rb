@@ -55,7 +55,7 @@ module Jekyll
             if blog_home['featured_post'].length == 1
               featured_post = @posts.find {|post| post['uid'] === blog_home['featured_post'][0]}
             else
-              featured_post = @posts.sort{ |a, b| b['date'] <=> a['date'] }.first
+              featured_post = @posts.sort {|a, b| b['date'] <=> a['date']}.first
             end
 
             front_matter = {
@@ -93,7 +93,9 @@ module Jekyll
           posts.each do |post|
             # Overrides
             post['layout'] = 'article'
-            # post['permalink'] = '/blog' + post['url']
+
+            # Set permalink from url value
+            post['permalink'] = post['url']
 
             # Strip slashes out of URL to create slug
             filename_title = post['url'].gsub(/[\s\/]/, '')
@@ -141,10 +143,6 @@ module Jekyll
                 post['author'] = this_author
               end
             end
-
-            # Set the permalink from the model
-            post['permalink'] = post['url']
-            post.delete('url')
 
             # Convert the data to front matter variables
             as_yaml = post.to_yaml
