@@ -142,6 +142,10 @@ module Jekyll
               end
             end
 
+            # Set the permalink from the model
+            post['permalink'] = post['url']
+            post.delete('url')
+
             # Convert the data to front matter variables
             as_yaml = post.to_yaml
 
