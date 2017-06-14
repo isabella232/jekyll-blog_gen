@@ -142,7 +142,8 @@ module Jekyll
               this_author = authors.find {|c| c['uid'] === post['author'][0]}
 
               if this_author
-                post['author'] = this_author
+                post['author'] = this_author['title']
+                post['authorData'] = this_author
               end
             end
 
