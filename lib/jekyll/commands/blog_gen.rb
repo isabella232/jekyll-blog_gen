@@ -19,8 +19,6 @@ module Jekyll
               generate_blog_home
 
               generate_press_releases
-
-              generate_press_mentions
             end
           end
         end
@@ -187,42 +185,6 @@ module Jekyll
 
             # Convert the data to front matter variables
             as_yaml = press_release.to_yaml
-
-            # Output the front matter and the raw post content into a Markdown file
-            File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
-          end
-        end
-
-        def generate_press_mentions
-          Jekyll.logger.info 'Generating press mentions...'
-
-          # Fetch them
-          press_mentions = get_content_json('press_mentions')
-
-          # Make '_press_mentions' collection directory
-          directory = File.join(@site.config['source'], '_press_mentions')
-          Dir.mkdir(directory) unless File.exists?(directory)
-
-          press_mentions.each do |press_mention|
-            # Strip slashes out of URL to create slug
-            filename_title = press_mention['url'].gsub(/[\s\/]/, '')
-
-            # Create standard filename expected for press_mentions
-            filename = Date.iso8601(press_mention['date']).strftime + "-#{filename_title}"
-
-            # Pull out the content
-            content = press_mention['body']
-            press_mention.delete('body')
-
-            # Switch URL field to be permalink
-            press_mention['permalink'] = press_mention['url'] + '/'
-            press_mention.delete('url')
-
-            # Set a search type for indexing
-            press_mention['search_type'] = 'press_mention'
-
-            # Convert the data to front matter variables
-            as_yaml = press_mention.to_yaml
 
             # Output the front matter and the raw post content into a Markdown file
             File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
