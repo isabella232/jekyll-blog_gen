@@ -102,6 +102,7 @@ module Jekyll
 
             # Create standard filename expected for posts
             filename = Date.iso8601(post['date']).strftime + "-#{filename_title}"
+            Jekyll.logger.info "Generating #{filename}..."
 
             # Pull out the content
             content = post['full_description']
@@ -172,6 +173,7 @@ module Jekyll
 
             # Create standard filename expected for press_releases
             filename = Date.iso8601(press_release['date']).strftime + "-#{filename_title}"
+            Jekyll.logger.info "Generating #{filename}..."
 
             # Pull out the content
             content = press_release['body']
