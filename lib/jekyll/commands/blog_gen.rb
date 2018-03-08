@@ -86,6 +86,11 @@ module Jekyll
           authors = get_content_json('authors')
           assets = get_content_json('assets')
 
+          unless posts
+            Jekyll.logger.info 'No new blog posts found'
+            return
+          end
+
           # Make '_posts' collection directory
           directory = File.join(@site.config['source'], '_posts')
           Dir.mkdir(directory) unless File.exists?(directory)
@@ -162,6 +167,11 @@ module Jekyll
 
           # Fetch them
           press_releases = get_content_json('press_releases')
+
+          unless press_releases
+            Jekyll.logger.info 'No new press releases found'
+            return
+          end
 
           # Make '_press_releases' collection directory
           directory = File.join(@site.config['source'], '_press_releases')
