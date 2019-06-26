@@ -86,14 +86,18 @@ module Jekyll
           authors = get_content_json('authors')
           assets = get_content_json('assets')
 
+	  Jekyll.logger.info 'Fetched posts, categories, authors, assets'
+
           unless posts
             Jekyll.logger.info 'No new blog posts found'
             return
           end
-
+Jekyll.logger.info 'Passed unless posts'
           # Make '_posts' collection directory
           directory = File.join(@site.config['source'], '_posts')
           Dir.mkdir(directory) unless File.exists?(directory)
+
+Jekyll.logger.info 'Made _posts collection directory'
 
           posts.each do |post|
             # Overrides
