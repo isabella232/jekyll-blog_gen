@@ -106,17 +106,21 @@ Jekyll.logger.info 'Made _posts collection directory'
             # Set permalink from url value
             post['permalink'] = post['url']
 
+            Jekyll.logger.info 'Stripping filename title'
             # Strip slashes out of URL to create slug
             filename_title = post['url'].gsub(/[\s\/]/, '')
 
+            Jekyll.logger.info 'Creating standard filename expected for posts'
             # Create standard filename expected for posts
             filename = Date.iso8601(post['date']).strftime + "-#{filename_title}"
             Jekyll.logger.info "Generating #{filename}..."
 
+            Jekyll.logger.info 'Pulling out content'
             # Pull out the content
             content = post['full_description']
             post.delete('full_description')
 
+            Jekyll.logger.info 'Converting featured image UID to local file path'
             # Convert featured image UID to local file path
             if post.has_key?('featured_image')
               assetData = assets.find {|asset| asset['uid'] == post['featured_image']}
