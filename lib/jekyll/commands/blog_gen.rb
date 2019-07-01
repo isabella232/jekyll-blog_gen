@@ -101,7 +101,7 @@ Jekyll.logger.info 'Past unless posts'
 
 Jekyll.logger.info 'Made _posts collection directory. Test.'
 
-          posts.each_with_index do |post, idx|
+          posts.each do |key, post|
             Jekyll.logger.info 'Override (post layout = article)'
             # Overrides
             post['layout'] = 'article'
