@@ -99,7 +99,7 @@ Jekyll.logger.info 'Past unless posts'
           directory = File.join(@site.config['source'], '_posts')
           Dir.mkdir(directory) unless File.exists?(directory)
 
-Jekyll.logger.info 'Made _posts collection directory'
+Jekyll.logger.info 'Made _posts collection directory. Test.'
 
           posts[0].each do |post|
             Jekyll.logger.info 'Override (post layout = article)'
