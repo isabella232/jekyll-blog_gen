@@ -87,8 +87,10 @@ module Jekyll
           authors = get_content_json('authors')
           assets = get_content_json('assets')
 
+          Jekyll.logger.info "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
           Jekyll.logger.info posts      
-
+          Jekyll.logger.info "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+          
 	  Jekyll.logger.info 'Fetched posts, categories, authors, assets'
 
           unless posts
