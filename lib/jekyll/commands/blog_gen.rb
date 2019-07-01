@@ -133,14 +133,17 @@ Jekyll.logger.info 'Made _posts collection directory. Test.'
               end
             end
 
+            Jekyll.logger.info 'Set a search type for indexing'
             # Set a search type for indexing
             post['search_type'] = 'blog_post'
 
+            Jekyll.logger.info 'Create an excerpt if the post doesn\'t have one set'
             # Create an excerpt if the post doesn't have one set
             if !post.has_key?('excerpt') || post['excerpt'].strip == ''
               post['excerpt'] = truncatechars(strip_html(content), 240)
             end
 
+            Jekyll.logger.info 'Convert the category UIDs to their text equivalents'
             # Convert the category UIDs to their text equivalents
             if categories
               post['category'].each_with_index do |category, index|
@@ -152,6 +155,7 @@ Jekyll.logger.info 'Made _posts collection directory. Test.'
               end
             end
 
+            Jekyll.logger.info 'Convert the author UID into the actual author data'
             # Convert the author UID into the actual author data
             if post['author'] && post['author'][0]
               this_author = authors.find {|c| c['uid'] === post['author'][0]}
@@ -162,12 +166,15 @@ Jekyll.logger.info 'Made _posts collection directory. Test.'
               end
             end
 
+            Jekyll.logger.info 'Convert the data to front matter variables'
             # Convert the data to front matter variables
             as_yaml = post.to_yaml
 
+            Jekyll.logger.info 'Add to collection'
             # Add to collection
             @posts.push(post)
 
+            Jekyll.logger.info 'Output the front matter and the raw post content into a Markdown file'
             # Output the front matter and the raw post content into a Markdown file
             File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
           end
