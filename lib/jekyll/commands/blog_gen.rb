@@ -14,6 +14,8 @@ module Jekyll
               @posts = []
 
               # Must be first
+              Jekyll.logger.info '##############################################################'
+	      Jekyll.logger.info '##############################################################'
               generate_blog_posts
 
               generate_blog_home
