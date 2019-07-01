@@ -126,9 +126,10 @@ Jekyll.logger.info 'Made _posts collection directory. Test.'
             Jekyll.logger.info 'Converting featured image UID to local file path'
             # Convert featured image UID to local file path
             if post.has_key?('featured_image')
+              # If has key featured_image (true)
               assetData = assets.find {|asset| asset['uid'] == post['featured_image']['uid']}
 
-            # Before conver featured image if
+            # Before convert featured image if
               if assetData
                 post['featured_image'] = "assets/images/#{post['featured_image']}/#{assetData['filename']}"
               end
