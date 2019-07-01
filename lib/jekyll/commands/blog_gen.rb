@@ -83,6 +83,7 @@ module Jekyll
           # Fetch the posts, categories, authors, assets
           categories = get_content_json('categories')
           posts = get_content_json('posts')
+          Jekyll.logger.info posts.inspect
           authors = get_content_json('authors')
           assets = get_content_json('assets')
 
@@ -101,7 +102,7 @@ Jekyll.logger.info 'Past unless posts'
 
 Jekyll.logger.info 'Made _posts collection directory. Test.'
 
-          posts[0].each do |post|
+          posts.each do |post|
             Jekyll.logger.info 'Override (post layout = article)'
             # Overrides
             post['layout'] = 'article'
