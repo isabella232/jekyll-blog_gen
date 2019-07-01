@@ -92,7 +92,7 @@ module Jekyll
             Jekyll.logger.info 'No new blog posts found'
             return
           end
-Jekyll.logger.info 'Passed unless posts'
+Jekyll.logger.info 'Past unless posts'
           # Make '_posts' collection directory
           directory = File.join(@site.config['source'], '_posts')
           Dir.mkdir(directory) unless File.exists?(directory)
@@ -169,6 +169,7 @@ Jekyll.logger.info 'Made _posts collection directory'
             # Output the front matter and the raw post content into a Markdown file
             File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
           end
+Jekyll.logger.info 'Past posts loop'
         end
 
         def generate_press_releases
