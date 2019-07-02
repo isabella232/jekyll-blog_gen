@@ -127,11 +127,11 @@ Jekyll.logger.info 'Made _posts collection directory. Test.'
             # Convert featured image UID to local file path
             if post.has_key?('featured_image')
               Jekyll.logger.info 'If has key featured_image (true)'
-              assetData = assets.find {|asset| asset['uid'] == post['featured_image'].uid}
+              assetData = assets.find {|key, asset| asset['uid'] == post['featured_image']['uid']}
 
               Jekyll.logger.info 'Before convert featured image if'
               if assetData
-                post['featured_image'] = "assets/images/#{post['featured_image']}/#{assetData['filename']}"
+                post['featured_image']['uid'] = "assets/images/#{post['featured_image']['uid']}/#{assetData[1]['filename']['uid']}"
               end
             end
 
@@ -149,10 +149,10 @@ Jekyll.logger.info 'Made _posts collection directory. Test.'
             # Convert the category UIDs to their text equivalents
             if categories
               post['category'].each_with_index do |category, index|
-                this_category = categories.find {|c| c['uid'] === category}
+                this_category = categories.find {|key, c| c['uid'] === category}
 
                 if this_category
-                  post['category'][index] = this_category['title']
+                  post['category'][index] = this_category[1]['title']
                 end
               end
             end
@@ -160,11 +160,11 @@ Jekyll.logger.info 'Made _posts collection directory. Test.'
             Jekyll.logger.info 'Convert the author UID into the actual author data'
             # Convert the author UID into the actual author data
             if post['author'] && post['author'][0]
-              this_author = authors.find {|c| c['uid'] === post['author'][0]}
+              this_author = authors.find {|key, c| c['uid'] === post['author'][0]}
 
               if this_author
-                post['author'] = this_author['title']
-                post['authorData'] = this_author
+                post['author'] = this_author[1]['title']
+                post['authorData'] = this_author[1]
               end
             end
 
@@ -200,22 +200,22 @@ Jekyll.logger.info 'Past posts loop'
 
           press_releases.each do |press_release|
             # Strip slashes out of URL to create slug
-            filename_title = press_release['url'].gsub(/[\s\/]/, '')
+            filename_title = press_release[1]['url'].gsub(/[\s\/]/, '')
 
             # Create standard filename expected for press_releases
-            filename = Date.iso8601(press_release['date']).strftime + "-#{filename_title}"
+            filename = Date.iso8601(press_release[1]['date']).strftime + "-#{filename_title}"
             Jekyll.logger.info "Generating #{filename}..."
 
             # Pull out the content
-            content = press_release['body']
+            content = press_release[1]['body']
             press_release.delete('body')
 
             # Switch URL field to be permalink
-            press_release['permalink'] = press_release['url'] + '/'
+            press_release[1]['permalink'] = press_release[1]['url'] + '/'
             press_release.delete('url')
 
             # Set a search type for indexing
-            press_release['search_type'] = 'press_release'
+            press_release[1]['search_type'] = 'press_release'
 
             # Convert the data to front matter variables
             as_yaml = press_release.to_yaml
