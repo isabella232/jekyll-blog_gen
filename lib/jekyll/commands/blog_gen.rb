@@ -54,18 +54,18 @@ module Jekyll
           if blog_home
             blog_home = blog_home.first
 
-            if blog_home['featured_post'].length == 1
-              featured_post = @posts.find {|post| post['uid'] === blog_home['featured_post'][0]}
+            if blog_home[1]['featured_post'].length == 1
+              featured_post = @posts.find {|post| post['uid'] === blog_home[1]['featured_post'][0]}
             else
               featured_post = @posts.sort {|a, b| b['date'] <=> a['date']}.first
             end
 
             front_matter = {
                 'layout' => 'blog-listing',
-                'permalink' => blog_home['url'],
-                'title' => blog_home['seo']['meta_title'],
+                'permalink' => blog_home[1]['url'],
+                'title' => blog_home[1]['seo']['meta_title'],
                 'pagination' => {'enabled' => true},
-                'seo' => {'meta_description' => blog_home['seo']['meta_description']},
+                'seo' => {'meta_description' => blog_home[1]['seo']['meta_description']},
                 'featured_post' => featured_post
             }
 
