@@ -14,8 +14,8 @@ module Jekyll
               @posts = []
 
               # Must be first
-              Jekyll.logger.info '##############################################################'
-	      Jekyll.logger.info '##############################################################'
+              # Jekyll.logger.info '##############################################################'
+	      # Jekyll.logger.info '##############################################################'
               generate_blog_posts
 
               generate_blog_home
@@ -88,64 +88,64 @@ module Jekyll
           authors = get_content_json('authors')
           assets = get_content_json('assets')
           
-	  Jekyll.logger.info 'Fetched posts, categories, authors, assets'
+	  # Jekyll.logger.info 'Fetched posts, categories, authors, assets'
 
           unless posts
             Jekyll.logger.info 'No new blog posts found'
             return
           end
-Jekyll.logger.info 'Past unless posts'
+# Jekyll.logger.info 'Past unless posts'
           # Make '_posts' collection directory
           directory = File.join(@site.config['source'], '_posts')
           Dir.mkdir(directory) unless File.exists?(directory)
 
-Jekyll.logger.info 'Made _posts collection directory. Test.'
+# Jekyll.logger.info 'Made _posts collection directory. Test.'
 
           posts.each do |key, post|
-            Jekyll.logger.info 'Override (post layout = article)'
+            # Jekyll.logger.info 'Override (post layout = article)'
             # Overrides
             post['layout'] = 'article'
 
             # Set permalink from url value
             post['permalink'] = post['url']
 
-            Jekyll.logger.info 'Stripping filename title'
+            # Jekyll.logger.info 'Stripping filename title'
             # Strip slashes out of URL to create slug
             filename_title = post['url'].gsub(/[\s\/]/, '')
 
-            Jekyll.logger.info 'Creating standard filename expected for posts'
+            # Jekyll.logger.info 'Creating standard filename expected for posts'
             # Create standard filename expected for posts
             filename = Date.iso8601(post['date']).strftime + "-#{filename_title}"
             Jekyll.logger.info "Generating #{filename}..."
 
-            Jekyll.logger.info 'Pulling out content'
+            # Jekyll.logger.info 'Pulling out content'
             # Pull out the content
             content = post['full_description']
             post.delete('full_description')
 
-            Jekyll.logger.info 'Converting featured image UID to local file path'
+            # Jekyll.logger.info 'Converting featured image UID to local file path'
             # Convert featured image UID to local file path
             unless post['featured_image'].nil? || post['featured_image'] != "null"
-              Jekyll.logger.info 'If has key featured_image (true)'
+              # Jekyll.logger.info 'If has key featured_image (true)'
               assetData = assets.find {|key, asset| asset['uid'] == post['featured_image']['uid']}
 
-              Jekyll.logger.info 'Before convert featured image if'
+              # Jekyll.logger.info 'Before convert featured image if'
               if assetData
                 post['featured_image']['uid'] = "assets/images/#{post['featured_image']['uid']}/#{assetData[1]['filename']['uid']}"
               end
             end
 
-            Jekyll.logger.info 'Set a search type for indexing'
+            # Jekyll.logger.info 'Set a search type for indexing'
             # Set a search type for indexing
             post['search_type'] = 'blog_post'
 
-            Jekyll.logger.info 'Create an excerpt if the post doesn\'t have one set'
+            # Jekyll.logger.info 'Create an excerpt if the post doesn\'t have one set'
             # Create an excerpt if the post doesn't have one set
             if !post.has_key?('excerpt') || post['excerpt'].strip == ''
               post['excerpt'] = truncatechars(strip_html(content), 240)
             end
 
-            Jekyll.logger.info 'Convert the category UIDs to their text equivalents'
+            # Jekyll.logger.info 'Convert the category UIDs to their text equivalents'
             # Convert the category UIDs to their text equivalents
             if categories
               post['category'].each_with_index do |category, index|
@@ -157,7 +157,7 @@ Jekyll.logger.info 'Made _posts collection directory. Test.'
               end
             end
 
-            Jekyll.logger.info 'Convert the author UID into the actual author data'
+            # Jekyll.logger.info 'Convert the author UID into the actual author data'
             # Convert the author UID into the actual author data
             if post['author'] && post['author'][0]
               this_author = authors.find {|key, c| c['uid'] === post['author'][0]}
@@ -168,15 +168,15 @@ Jekyll.logger.info 'Made _posts collection directory. Test.'
               end
             end
 
-            Jekyll.logger.info 'Convert the data to front matter variables'
+            # Jekyll.logger.info 'Convert the data to front matter variables'
             # Convert the data to front matter variables
             as_yaml = post.to_yaml
 
-            Jekyll.logger.info 'Add to collection'
+            # Jekyll.logger.info 'Add to collection'
             # Add to collection
             @posts.push(post)
 
-            Jekyll.logger.info 'Output the front matter and the raw post content into a Markdown file'
+            # Jekyll.logger.info 'Output the front matter and the raw post content into a Markdown file'
             # Output the front matter and the raw post content into a Markdown file
             File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
           end
