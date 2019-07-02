@@ -218,7 +218,7 @@ Jekyll.logger.info 'Past posts loop'
             press_release[1]['search_type'] = 'press_release'
 
             # Convert the data to front matter variables
-            as_yaml = press_release.to_yaml
+            as_yaml = press_release[1].to_yaml
 
             # Output the front matter and the raw post content into a Markdown file
             File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
