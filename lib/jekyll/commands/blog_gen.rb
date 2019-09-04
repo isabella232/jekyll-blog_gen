@@ -14,6 +14,8 @@ module Jekyll
               @posts = []
 
               # Must be first
+              # Jekyll.logger.info '##############################################################'
+	      # Jekyll.logger.info '##############################################################'
               generate_blog_posts
 
               generate_blog_home
@@ -52,18 +54,18 @@ module Jekyll
           if blog_home
             blog_home = blog_home.first
 
-            if blog_home['featured_post'].length == 1
-              featured_post = @posts.find {|post| post['uid'] === blog_home['featured_post'][0]}
+            if blog_home[1]['featured_post'].length == 1
+              featured_post = @posts.find {|post| post['uid'] === blog_home[1]['featured_post'][0]}
             else
               featured_post = @posts.sort {|a, b| b['date'] <=> a['date']}.first
             end
 
             front_matter = {
                 'layout' => 'blog-listing',
-                'permalink' => blog_home['url'],
-                'title' => blog_home['seo']['meta_title'],
+                'permalink' => blog_home[1]['url'],
+                'title' => blog_home[1]['seo']['meta_title'],
                 'pagination' => {'enabled' => true},
-                'seo' => {'meta_description' => blog_home['seo']['meta_description']},
+                'seo' => {'meta_description' => blog_home[1]['seo']['meta_description']},
                 'featured_post' => featured_post
             }
 
@@ -85,81 +87,100 @@ module Jekyll
           posts = get_content_json('posts')
           authors = get_content_json('authors')
           assets = get_content_json('assets')
+          
+	  # Jekyll.logger.info 'Fetched posts, categories, authors, assets'
 
           unless posts
             Jekyll.logger.info 'No new blog posts found'
             return
           end
-
+# Jekyll.logger.info 'Past unless posts'
           # Make '_posts' collection directory
           directory = File.join(@site.config['source'], '_posts')
           Dir.mkdir(directory) unless File.exists?(directory)
 
-          posts.each do |post|
+# Jekyll.logger.info 'Made _posts collection directory. Test.'
+
+          posts.each do |key, post|
+            # Jekyll.logger.info 'Override (post layout = article)'
             # Overrides
             post['layout'] = 'article'
 
             # Set permalink from url value
             post['permalink'] = post['url']
 
+            # Jekyll.logger.info 'Stripping filename title'
             # Strip slashes out of URL to create slug
             filename_title = post['url'].gsub(/[\s\/]/, '')
 
+            # Jekyll.logger.info 'Creating standard filename expected for posts'
             # Create standard filename expected for posts
             filename = Date.iso8601(post['date']).strftime + "-#{filename_title}"
-            Jekyll.logger.info "Generating #{filename}..."
+            # Jekyll.logger.info "Generating #{filename}..."
 
+            # Jekyll.logger.info 'Pulling out content'
             # Pull out the content
             content = post['full_description']
             post.delete('full_description')
 
+            # Jekyll.logger.info 'Converting featured image UID to local file path'
             # Convert featured image UID to local file path
-            if post.has_key?('featured_image')
-              assetData = assets.find {|asset| asset['uid'] == post['featured_image']}
+            unless post['featured_image'].nil? || post['featured_image'] != "null"
+              # Jekyll.logger.info 'If has key featured_image (true)'
+              assetData = assets.find {|key, asset| asset['uid'] == post['featured_image']['uid']}
 
+              # Jekyll.logger.info 'Before convert featured image if'
               if assetData
-                post['featured_image'] = "assets/images/#{post['featured_image']}/#{assetData['filename']}"
+                post['featured_image']['uid'] = "assets/images/#{post['featured_image']['uid']}/#{assetData[1]['filename']['uid']}"
               end
             end
 
+            # Jekyll.logger.info 'Set a search type for indexing'
             # Set a search type for indexing
             post['search_type'] = 'blog_post'
 
+            # Jekyll.logger.info 'Create an excerpt if the post doesn\'t have one set'
             # Create an excerpt if the post doesn't have one set
             if !post.has_key?('excerpt') || post['excerpt'].strip == ''
               post['excerpt'] = truncatechars(strip_html(content), 240)
             end
 
+            # Jekyll.logger.info 'Convert the category UIDs to their text equivalents'
             # Convert the category UIDs to their text equivalents
             if categories
               post['category'].each_with_index do |category, index|
-                this_category = categories.find {|c| c['uid'] === category}
+                this_category = categories.find {|key, c| c['uid'] === category}
 
                 if this_category
-                  post['category'][index] = this_category['title']
+                  post['category'][index] = this_category[1]['title']
                 end
               end
             end
 
+            # Jekyll.logger.info 'Convert the author UID into the actual author data'
             # Convert the author UID into the actual author data
             if post['author'] && post['author'][0]
-              this_author = authors.find {|c| c['uid'] === post['author'][0]}
+              this_author = authors.find {|key, c| c['uid'] === post['author'][0]}
 
               if this_author
-                post['author'] = this_author['title']
-                post['authorData'] = this_author
+                post['author'] = this_author[1]['title']
+                post['authorData'] = this_author[1]
               end
             end
 
+            # Jekyll.logger.info 'Convert the data to front matter variables'
             # Convert the data to front matter variables
             as_yaml = post.to_yaml
 
+            # Jekyll.logger.info 'Add to collection'
             # Add to collection
             @posts.push(post)
 
+            # Jekyll.logger.info 'Output the front matter and the raw post content into a Markdown file'
             # Output the front matter and the raw post content into a Markdown file
             File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
           end
+Jekyll.logger.info 'Past posts loop'
         end
 
         def generate_press_releases
@@ -179,25 +200,25 @@ module Jekyll
 
           press_releases.each do |press_release|
             # Strip slashes out of URL to create slug
-            filename_title = press_release['url'].gsub(/[\s\/]/, '')
+            filename_title = press_release[1]['url'].gsub(/[\s\/]/, '')
 
             # Create standard filename expected for press_releases
             filename = Date.iso8601(press_release['date']).strftime + "-#{filename_title}"
-            Jekyll.logger.info "Generating #{filename}..."
+            # Jekyll.logger.info "Generating #{filename}..."
 
             # Pull out the content
-            content = press_release['body']
+            content = press_release[1]['body']
             press_release.delete('body')
 
             # Switch URL field to be permalink
-            press_release['permalink'] = press_release['url'] + '/'
+            press_release[1]['permalink'] = press_release[1]['url'] + '/'
             press_release.delete('url')
 
             # Set a search type for indexing
-            press_release['search_type'] = 'press_release'
+            press_release[1]['search_type'] = 'press_release'
 
             # Convert the data to front matter variables
-            as_yaml = press_release.to_yaml
+            as_yaml = press_release[1].to_yaml
 
             # Output the front matter and the raw post content into a Markdown file
             File.write(File.join(directory, "#{filename}.md"), "#{as_yaml}---\n{% raw %}#{content}{% endraw %}")
