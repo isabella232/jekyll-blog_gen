@@ -115,10 +115,10 @@ module Jekyll
 
             # Convert featured image UID to local file path
             if post.has_key?('featured_image')
-              assetData = assets.find {|asset| asset['uid'] == post['featured_image'].first['uid']}
+              assetData = assets.find {|asset| asset['uid'] == post['featured_image'][0]['uid']}
 
               if assetData
-                post['featured_image'] = "assets/images/#{post['featured_image'].first['uid']}/#{assetData['filename']}"
+                post['featured_image'] = "assets/images/#{post['featured_image'][0]['uid']}/#{assetData['filename']}"
               end
             end
 
