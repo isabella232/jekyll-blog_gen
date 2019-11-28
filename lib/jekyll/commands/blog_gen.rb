@@ -1,6 +1,7 @@
 require 'date'
 require 'fileutils'
 require 'pry'
+require 'json'
 require 'yaml'
 
 module Jekyll
