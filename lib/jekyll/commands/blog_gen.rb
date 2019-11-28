@@ -118,7 +118,7 @@ module Jekyll
               assetData = assets.find {|asset| asset['uid'] == post['featured_image'].first['uid']}
 
               if assetData
-                post['featured_image'] = "assets/images/#{post['featured_image']}/#{assetData['filename']}"
+                post['featured_image'] = "assets/images/#{post['featured_image'].first['uid']}/#{assetData['filename']}"
               end
             end
 
