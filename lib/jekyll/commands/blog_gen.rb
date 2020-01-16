@@ -153,7 +153,7 @@ module Jekyll
 
                 if this_author
                   post['author'] = this_author['title']
-                  # post['authorData'].shift(this_author)
+                  post['authorData'].push(this_author)
                 end
               end
             end
