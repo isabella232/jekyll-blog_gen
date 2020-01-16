@@ -143,10 +143,8 @@ module Jekyll
 
             # Convert the author UID into the actual author data
 
-            Jekyll.logger.info 'Generating post authors'
             if post['author'] && post['author'][0]
               post['authorData'] = []
-              Jekyll.logger.info 'Author data set to array'
 
               post['author'].each do |author|
                 this_author = authors.find {|c| c['uid'] === author}
