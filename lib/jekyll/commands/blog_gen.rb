@@ -142,12 +142,17 @@ module Jekyll
             end
 
             # Convert the author UID into the actual author data
-            if post['author'] && post['author'][0]
-              this_author = authors.find {|c| c['uid'] === post['author'][0]}
 
-              if this_author
-                post['author'] = this_author['title']
-                post['authorData'] = this_author
+            if post['author'] && post['author'][0]
+              post['authorData'] = []
+
+              post['author'].each do |author|
+                this_author = authors.find {|c| c['uid'] === author}
+
+                if this_author
+                  post['author'] = this_author['title']
+                  post['authorData'].push(this_author)
+                end
               end
             end
 
