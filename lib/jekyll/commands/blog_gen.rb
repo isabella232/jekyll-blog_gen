@@ -107,7 +107,7 @@ module Jekyll
 
             # Create standard filename expected for posts
             filename = Date.iso8601(post['date']).strftime + "-#{filename_title}"
-            Jekyll.logger.info "Generating #{filename}..."
+            # Jekyll.logger.info "Generating #{filename}..."
 
             # Pull out the content
             content = post['full_description']
@@ -142,12 +142,17 @@ module Jekyll
             end
 
             # Convert the author UID into the actual author data
-            if post['author'] && post['author'][0]
-              this_author = authors.find {|c| c['uid'] === post['author'][0]}
 
-              if this_author
-                post['author'] = this_author['title']
-                post['authorData'] = this_author
+            if post['author'] && post['author'][0]
+              post['authorData'] = []
+
+              post['author'].each do |author|
+                this_author = authors.find {|c| c['uid'] === author}
+
+                if this_author
+                  post['author'] = this_author['title']
+                  post['authorData'].push(this_author)
+                end
               end
             end
 
@@ -183,7 +188,7 @@ module Jekyll
 
             # Create standard filename expected for press_releases
             filename = Date.iso8601(press_release['date']).strftime + "-#{filename_title}"
-            Jekyll.logger.info "Generating #{filename}..."
+            # Jekyll.logger.info "Generating #{filename}..."
 
             # Pull out the content
             content = press_release['body']
